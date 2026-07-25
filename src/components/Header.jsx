@@ -1,46 +1,26 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import './Header.css';
-
-type ClientAuth = {
-  name: string;
-  email: string;
-};
-
 const Header = () => {
-  const [authClient, setAuthClient] = useState<ClientAuth | null>(null);
-  const [menuOpen, setMenuOpen] = useState(false);
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    const stored = localStorage.getItem('djClient');
-    if (stored) {
-      setAuthClient(JSON.parse(stored));
-    }
-  }, []);
-
-  const handleLogout = () => {
-    localStorage.removeItem('djClient');
-    setAuthClient(null);
-    navigate('/');
-  };
-
-  const baseUrl = import.meta.env.BASE_URL;
-
-  return (
-    <header className="header">
+    const [authClient, setAuthClient] = useState(null);
+    const [menuOpen, setMenuOpen] = useState(false);
+    const navigate = useNavigate();
+    useEffect(() => {
+        const stored = localStorage.getItem('djClient');
+        if (stored) {
+            setAuthClient(JSON.parse(stored));
+        }
+    }, []);
+    const handleLogout = () => {
+        localStorage.removeItem('djClient');
+        setAuthClient(null);
+        navigate('/');
+    };
+    const baseUrl = import.meta.env.BASE_URL;
+    return (<header className="header">
       <div className="brand">
-        <div
-          className="brand-logo"
-          aria-label="Logo DJ The Source"
-          onMouseEnter={() => setMenuOpen(true)}
-          onMouseLeave={() => setMenuOpen(false)}
-        >
-          <img
-            src={`${baseUrl}LED-moving-Head-3.png`}
-            alt="DJ The Source"
-            className="brand-image"
-          />
+        <div className="brand-logo" aria-label="Logo DJ The Source" onMouseEnter={() => setMenuOpen(true)} onMouseLeave={() => setMenuOpen(false)}>
+          <img src={`${baseUrl}LED-moving-Head-3.png`} alt="DJ The Source" className="brand-image"/>
           <span className="hamburger-icon" aria-hidden="true">
             <span />
             <span />
@@ -62,20 +42,14 @@ const Header = () => {
         <Link to="/servico/decoracao">Decorador</Link>
         <Link to="/servico/salao">Salão</Link>
         <Link to="/orcamento">Orçamento</Link>
-        {authClient ? (
-          <div className="auth-actions">
+        {authClient ? (<div className="auth-actions">
             <span className="auth-welcome">Olá, {authClient.name}</span>
             <button type="button" className="logout-button" onClick={handleLogout}>Sair</button>
-          </div>
-        ) : (
-          <>
+          </div>) : (<>
             <Link to="/register">Cadastra-se</Link>
             <Link to="/login">Login</Link>
-          </>
-        )}
+          </>)}
       </nav>
-    </header>
-  );
+    </header>);
 };
-
 export default Header;
