@@ -36,7 +36,6 @@ const Register = () => {
   };
 
   const formatCep = (v: string) => v.replace(/\D/g, '').replace(/(\d{5})(\d{0,3})/, (m, a, b) => (b ? `${a}-${b}` : a));
-  const [message, setMessage] = useState('');
 
   const validateCpf = (v: string) => {
     const cpf = v.replace(/\D/g, '');
