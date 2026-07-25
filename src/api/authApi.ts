@@ -1,40 +1,53 @@
 type RegisterPayload = {
-  name: string;
+  nome_completo: string;
+  cpf_cnpj: string;
   email: string;
-  password: string;
+  telefone: string;
+  data_nascimento: string;
+  genero: string;
+  cep: string;
+  cidade: string;
+  estado: string;
 };
 
 type LoginPayload = {
   email: string;
-  password: string;
+  password?: string;
 };
 
-const STORAGE_KEY = 'djTheSourceUsers';
+const STORAGE_KEY = "djTheSourceUsers";
 
 function getUsers() {
   const stored = localStorage.getItem(STORAGE_KEY);
-  return stored ? JSON.parse(stored) as Array<{ name: string; email: string; password: string }> : [];
+  return stored ? (JSON.parse(stored) as Array<RegisterPayload>) : [];
 }
 
-function saveUsers(users: Array<{ name: string; email: string; password: string }>) {
+function saveUsers(users: Array<RegisterPayload>) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(users));
 }
 
 export async function registerClient(payload: RegisterPayload) {
   const users = getUsers();
-  if (users.find(user => user.email === payload.email)) {
-    throw new Error('E-mail já cadastrado. Faça login ou use outro e-mail.');
+  if (
+    users.find(
+      (user) =>
+        user.email === payload.email || user.cpf_cnpj === payload.cpf_cnpj,
+    )
+  ) {
+    throw new Error(
+      "E-mail ou CPF/CNPJ já cadastrado. Faça login ou use outro.",
+    );
   }
   users.push(payload);
   saveUsers(users);
-  return { name: payload.name, email: payload.email };
+  return payload;
 }
 
 export async function loginClient(payload: LoginPayload) {
   const users = getUsers();
-  const user = users.find(user => user.email === payload.email && user.password === payload.password);
+  const user = users.find((user) => user.email === payload.email);
   if (!user) {
-    throw new Error('E-mail ou senha incorretos.');
+    throw new Error("E-mail não cadastrado.");
   }
-  return { name: user.name, email: user.email };
+  return { name: user.nome_completo, email: user.email };
 }
